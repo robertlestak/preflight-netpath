@@ -9,8 +9,8 @@ import (
 
 type PreflightNetPath struct {
 	// Endpoint to test in the form of <host>:<port>
-	Endpoint string        `json:"endpoint,omitempty"`
-	Timeout  time.Duration `json:"timeout,omitempty"`
+	Endpoint string        `json:"endpoint,omitempty" yaml:"endpoint,omitempty"`
+	Timeout  time.Duration `json:"timeout,omitempty" yaml:"timeout,omitempty"`
 }
 
 func (pf *PreflightNetPath) Init() error {
