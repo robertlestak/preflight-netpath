@@ -20,6 +20,8 @@ curl -sSL https://raw.githubusercontent.com/robertlestak/preflight-netpath/main/
 
 ```bash
 Usage of preflight-netpath:
+  -config string
+        path to config file
   -endpoint string
         endpoint to test in the form of <host>:<port>
   -log-level string
@@ -32,4 +34,17 @@ Usage of preflight-netpath:
 
 ```bash
 preflight-netpath -endpoint google.com:443
+```
+
+## Config file
+
+You can also use a config file rather than cli args.
+
+```yaml
+endpoint: google.com:443
+timeout: 5s
+```
+
+```bash
+preflight-netpath -config config.yaml
 ```

@@ -26,6 +26,7 @@ func main() {
 	logLevel := preflightFlags.String("log-level", log.GetLevel().String(), "log level")
 	endpoint := preflightFlags.String("endpoint", "", "endpoint to test in the form of <host>:<port>")
 	timeout := preflightFlags.Duration("timeout", time.Second*5, "timeout in seconds")
+	configFile := preflightFlags.String("config", "", "path to config file")
 	preflightFlags.Parse(os.Args[1:])
 	ll, err := log.ParseLevel(*logLevel)
 	if err != nil {
@@ -35,6 +36,12 @@ func main() {
 	pf := &preflightnetpath.PreflightNetPath{
 		Endpoint: *endpoint,
 		Timeout:  *timeout,
+	}
+	if *configFile != "" {
+		if pf, err = preflightnetpath.LoadConfig(*configFile); err != nil {
+			l.WithError(err).Error("error loading config")
+			os.Exit(1)
+		}
 	}
 	if err := pf.Run(); err != nil {
 		l.WithError(err).Error("error running preflight-netpath")
