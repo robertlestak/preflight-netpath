@@ -10,6 +10,18 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var (
+	Logger *log.Logger
+)
+
+func init() {
+	if Logger == nil {
+		Logger = log.New()
+		Logger.SetOutput(os.Stdout)
+		Logger.SetLevel(log.InfoLevel)
+	}
+}
+
 type PreflightNetPath struct {
 	// Endpoint to test in the form of <host>:<port>
 	Endpoint string        `json:"endpoint" yaml:"endpoint"`
@@ -17,7 +29,7 @@ type PreflightNetPath struct {
 }
 
 func LoadConfig(filepath string) (*PreflightNetPath, error) {
-	l := log.WithFields(log.Fields{
+	l := Logger.WithFields(log.Fields{
 		"fn": "LoadConfig",
 	})
 	l.Debug("loading config")
@@ -39,7 +51,7 @@ func LoadConfig(filepath string) (*PreflightNetPath, error) {
 }
 
 func (pf *PreflightNetPath) Init() error {
-	l := log.WithFields(log.Fields{
+	l := Logger.WithFields(log.Fields{
 		"fn": "Init",
 	})
 	l.Debug("starting preflight-netpath")
@@ -50,24 +62,28 @@ func (pf *PreflightNetPath) Init() error {
 }
 
 func (pf *PreflightNetPath) Run() error {
-	l := log.WithFields(log.Fields{
-		"fn": "Run",
+	l := Logger.WithFields(log.Fields{
+		"preflight": "netpath",
 	})
 	l.Debug("starting preflight-netpath")
 	if pf.Endpoint == "" {
 		l.Error("endpoint is required")
 		return nil
 	}
+	if err := pf.Init(); err != nil {
+		l.WithError(err).Error("error initializing preflight-netpath")
+		return err
+	}
 	// create a tcp connection to the endpoint
 	// if successful, return nil
 	// if unsuccessful, return error
 	c, err := net.DialTimeout("tcp", pf.Endpoint, pf.Timeout)
 	if err != nil {
-		l.WithError(err).Error("error dialing endpoint")
+		l.WithError(err).Error("failed")
 		return err
 	}
 	defer c.Close()
 	l.Debug("successfully dialed endpoint")
-	l.Info("preflight successful")
+	l.Info("passed")
 	return nil
 }

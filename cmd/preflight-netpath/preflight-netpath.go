@@ -33,6 +33,7 @@ func main() {
 		ll = log.InfoLevel
 	}
 	log.SetLevel(ll)
+	preflightnetpath.Logger = l.Logger
 	pf := &preflightnetpath.PreflightNetPath{
 		Endpoint: *endpoint,
 		Timeout:  *timeout,
