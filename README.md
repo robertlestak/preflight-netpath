@@ -36,6 +36,13 @@ Usage of preflight-netpath:
 preflight-netpath -endpoint google.com:443
 ```
 
+### Docker example
+
+```bash
+docker run --rm robertlestak/preflight-netpath \
+      -endpoint google.com:443
+```
+
 ## Config file
 
 You can also use a config file rather than cli args.
