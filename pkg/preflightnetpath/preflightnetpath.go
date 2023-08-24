@@ -2,6 +2,7 @@ package preflightnetpath
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"time"
@@ -61,6 +62,15 @@ func (pf *PreflightNetPath) Init() error {
 	return nil
 }
 
+func (pf *PreflightNetPath) Equivalent() {
+	l := Logger
+	l.Debug("printing equivalent command")
+	timeoutSeconds := int(pf.Timeout.Seconds())
+	cmd := fmt.Sprintf(`HOST="$(echo %s | cut -d: -f1)" && PORT="$(echo %s | cut -d: -f2)" && nc -z -w%d $HOST $PORT`, pf.Endpoint, pf.Endpoint, timeoutSeconds)
+	cmd = fmt.Sprintf(`sh -c '%s'`, cmd)
+	l.Infof("equivalent command: %s", cmd)
+}
+
 func (pf *PreflightNetPath) Run() error {
 	l := Logger.WithFields(log.Fields{
 		"preflight": "netpath",
@@ -74,6 +84,7 @@ func (pf *PreflightNetPath) Run() error {
 		l.WithError(err).Error("error initializing preflight-netpath")
 		return err
 	}
+	pf.Equivalent()
 	// create a tcp connection to the endpoint
 	// if successful, return nil
 	// if unsuccessful, return error
