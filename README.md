@@ -24,6 +24,8 @@ Usage of preflight-netpath:
         path to config file
   -endpoint string
         endpoint to test in the form of <host>:<port>
+  -equiv
+        print equivalent command
   -log-level string
         log level (default "info")
   -timeout duration
