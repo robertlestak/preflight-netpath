@@ -27,6 +27,7 @@ type PreflightNetPath struct {
 	// Endpoint to test in the form of <host>:<port>
 	Endpoint string        `json:"endpoint" yaml:"endpoint"`
 	Timeout  time.Duration `json:"timeout" yaml:"timeout"`
+	Equiv    bool          `json:"equiv" yaml:"equiv"`
 }
 
 func LoadConfig(filepath string) (*PreflightNetPath, error) {
@@ -68,7 +69,7 @@ func (pf *PreflightNetPath) Equivalent() {
 	timeoutSeconds := int(pf.Timeout.Seconds())
 	cmd := fmt.Sprintf(`HOST="$(echo %s | cut -d: -f1)" && PORT="$(echo %s | cut -d: -f2)" && nc -z -w%d $HOST $PORT`, pf.Endpoint, pf.Endpoint, timeoutSeconds)
 	cmd = fmt.Sprintf(`sh -c '%s'`, cmd)
-	l.Infof("equivalent command: %s", cmd)
+	fmt.Println(cmd)
 }
 
 func (pf *PreflightNetPath) Run() error {
@@ -84,7 +85,6 @@ func (pf *PreflightNetPath) Run() error {
 		l.WithError(err).Error("error initializing preflight-netpath")
 		return err
 	}
-	pf.Equivalent()
 	// create a tcp connection to the endpoint
 	// if successful, return nil
 	// if unsuccessful, return error
